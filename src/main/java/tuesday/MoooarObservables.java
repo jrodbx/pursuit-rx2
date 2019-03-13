@@ -10,10 +10,10 @@ public class MoooarObservables {
         () -> System.out.println("done")
     );
 
-    giveMeSomeData(observer);
+    subscribe(observer);
   }
 
-  static void giveMeSomeData(Observer<Object> observer) {
+  static void subscribe(Observer<Object> observer) {
     Stream.of(10, 20, 30)
         .forEach(i -> observer.next.nextCallback(i));
     observer.complete.completeCallback();
