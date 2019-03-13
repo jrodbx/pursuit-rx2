@@ -7,17 +7,15 @@ public class MoooarObservables {
     Observable<Integer> arrayObservable =
         Observable.from(10, 20, 30);
 
-    Observer<Integer> observer = new Observer<>(
-        o -> System.out.println(o),
-        throwable -> System.out.println(throwable),
-        () -> System.out.println("done")
-    );
-
     arrayObservable
         .map(x -> x / 10)
         .filter(x -> x != 2)
         .delay(2000)
-        .subscribe(observer);
+        .subscribe(new Observer<>(
+            o -> System.out.println(o),
+            throwable -> System.out.println(throwable),
+            () -> System.out.println("done")
+        ));
   }
 }
 
