@@ -20,6 +20,7 @@ public class MoooarObservables {
     arrayObservable
         .map(x -> x / 10)
         .filter(x -> x != 2)
+        .delay(2000)
         .subscribe(observer);
   }
 }
@@ -59,6 +60,25 @@ class Observable<T> {
                       if (condition.pass(t)) {
                         outputObserver.next.nextCallback(t);
                       }
+                    },
+                    throwable -> outputObserver.error.errorCallback(throwable),
+                    () -> outputObserver.complete.completeCallback()
+                )
+            ));
+    return outputObservable;
+  }
+
+  public Observable<T> delay(long time) {
+    Observable<T> inputObservable = this;
+    Observable<T> outputObservable = Observable.create(
+        outputObserver ->
+            inputObservable.subscribe(
+                new Observer<>(
+                    t -> {
+                      try {
+                        Thread.sleep(time);
+                      } catch (InterruptedException ignored) { }
+                      outputObserver.next.nextCallback(t);
                     },
                     throwable -> outputObserver.error.errorCallback(throwable),
                     () -> outputObserver.complete.completeCallback()
