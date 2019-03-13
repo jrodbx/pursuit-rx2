@@ -5,11 +5,7 @@ import java.util.stream.Stream;
 public class MoooarObservables {
   public static void main(String[] args) {
     Observable<Integer> arrayObservable =
-        Observable.create(observer -> {
-          Stream.of(10, 20, 30)
-              .forEach(i -> observer.next.nextCallback(i));
-          observer.complete.completeCallback();
-        });
+        Observable.from(10, 20, 30);
 
     Observer<Integer> observer = new Observer<>(
         o -> System.out.println(o),
@@ -85,6 +81,14 @@ class Observable<T> {
                 )
             ));
     return outputObservable;
+  }
+
+  static <T> Observable<T> from(T... items) {
+    return Observable.create(observer -> {
+      Stream.of(items)
+          .forEach(i -> observer.next.nextCallback(i));
+      observer.complete.completeCallback();
+    });
   }
 
   static <T> Observable<T> create(Subscribe<T> subscribe) {
