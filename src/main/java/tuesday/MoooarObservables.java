@@ -16,6 +16,7 @@ public class MoooarObservables {
   static void giveMeSomeData(Observer<Object> observer) {
     Stream.of(10, 20, 30)
         .forEach(i -> observer.next.nextCallback(i));
+    observer.complete.completeCallback();
   }
 }
 
