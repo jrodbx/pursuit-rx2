@@ -19,6 +19,7 @@ public class MoooarObservables {
 
     arrayObservable
         .map(x -> x / 10)
+        .filter(x -> x != 2)
         .subscribe(observer);
   }
 }
@@ -48,6 +49,24 @@ class Observable<T> {
     return outputObservable;
   }
 
+  public Observable<T> filter(Condition<T> condition) {
+    Observable<T> inputObservable = this;
+    Observable<T> outputObservable = Observable.create(
+        outputObserver ->
+            inputObservable.subscribe(
+                new Observer<>(
+                    t -> {
+                      if (condition.pass(t)) {
+                        outputObserver.next.nextCallback(t);
+                      }
+                    },
+                    throwable -> outputObserver.error.errorCallback(throwable),
+                    () -> outputObserver.complete.completeCallback()
+                )
+            ));
+    return outputObservable;
+  }
+
   static <T> Observable<T> create(Subscribe<T> subscribe) {
     return new Observable<>(subscribe);
   }
@@ -67,6 +86,10 @@ class Observer<T> {
 
 interface Transform<INPUT, OUTPUT> {
   OUTPUT transform(INPUT input);
+}
+
+interface Condition<ITEM> {
+  boolean pass(ITEM item);
 }
 
 interface Subscribe<T> {
