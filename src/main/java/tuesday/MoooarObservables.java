@@ -38,9 +38,9 @@ class Observable<T> {
         outputObserver ->
             inputObservable.subscribe(
                 new Observer<>(
-                    t -> outputObserver.next.nextCallback(transform.transform(t)),
-                    throwable -> outputObserver.error.errorCallback(throwable),
-                    () -> outputObserver.complete.completeCallback()
+                    t -> outputObserver.onNext(transform.transform(t)),
+                    throwable -> outputObserver.onError(throwable),
+                    () -> outputObserver.onComplete()
                 )
             ));
     return outputObservable;
@@ -54,11 +54,11 @@ class Observable<T> {
                 new Observer<>(
                     t -> {
                       if (condition.pass(t)) {
-                        outputObserver.next.nextCallback(t);
+                        outputObserver.onNext(t);
                       }
                     },
-                    throwable -> outputObserver.error.errorCallback(throwable),
-                    () -> outputObserver.complete.completeCallback()
+                    throwable -> outputObserver.onError(throwable),
+                    () -> outputObserver.onComplete()
                 )
             ));
     return outputObservable;
@@ -74,10 +74,10 @@ class Observable<T> {
                       try {
                         Thread.sleep(time);
                       } catch (InterruptedException ignored) { }
-                      outputObserver.next.nextCallback(t);
+                      outputObserver.onNext(t);
                     },
-                    throwable -> outputObserver.error.errorCallback(throwable),
-                    () -> outputObserver.complete.completeCallback()
+                    throwable -> outputObserver.onError(throwable),
+                    () -> outputObserver.onComplete()
                 )
             ));
     return outputObservable;
@@ -86,8 +86,8 @@ class Observable<T> {
   static <T> Observable<T> from(T... items) {
     return Observable.create(observer -> {
       Stream.of(items)
-          .forEach(i -> observer.next.nextCallback(i));
-      observer.complete.completeCallback();
+          .forEach(i -> observer.onNext(i));
+      observer.onComplete();
     });
   }
 
@@ -105,6 +105,18 @@ class Observer<T> {
     this.next = next;
     this.error = error;
     this.complete = complete;
+  }
+
+  void onNext(T t) {
+    next.nextCallback(t);
+  }
+
+  void onError(Throwable throwable) {
+    error.errorCallback(throwable);
+  }
+
+  void onComplete() {
+    complete.completeCallback();
   }
 }
 
