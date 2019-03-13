@@ -4,11 +4,12 @@ import java.util.stream.Stream;
 
 public class MoooarObservables {
   public static void main(String[] args) {
-    Observable<Integer> arrayObservable = new Observable<>(observer -> {
-      Stream.of(10, 20, 30)
-          .forEach(i -> observer.next.nextCallback(i));
-      observer.complete.completeCallback();
-    });
+    Observable<Integer> arrayObservable =
+        Observable.create(observer -> {
+          Stream.of(10, 20, 30)
+              .forEach(i -> observer.next.nextCallback(i));
+          observer.complete.completeCallback();
+        });
 
     Observer<Integer> observer = new Observer<>(
         o -> System.out.println(o),
@@ -29,6 +30,10 @@ class Observable<T> {
 
   void subscribe(Observer<T> observer) {
     innerSubscribe.subscribe(observer);
+  }
+
+  static <T> Observable<T> create(Subscribe<T> subscribe) {
+    return new Observable<>(subscribe);
   }
 }
 
