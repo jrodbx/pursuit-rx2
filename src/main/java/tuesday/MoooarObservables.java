@@ -17,7 +17,9 @@ public class MoooarObservables {
         () -> System.out.println("done")
     );
 
-    arrayObservable.subscribe(observer);
+    arrayObservable
+        .map(x -> x / 10)
+        .subscribe(observer);
   }
 }
 
@@ -34,7 +36,15 @@ class Observable<T> {
 
   public <R> Observable<R> map(Transform<T, R> transform) {
     Observable<T> inputObservable = this;
-    Observable<R> outputObservable = null;
+    Observable<R> outputObservable = Observable.create(
+        outputObserver ->
+            inputObservable.subscribe(
+                new Observer<>(
+                    t -> outputObserver.next.nextCallback(transform.transform(t)),
+                    throwable -> outputObserver.error.errorCallback(throwable),
+                    () -> outputObserver.complete.completeCallback()
+                )
+            ));
     return outputObservable;
   }
 
