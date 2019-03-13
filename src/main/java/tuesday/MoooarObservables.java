@@ -11,11 +11,11 @@ public class MoooarObservables {
         .map(x -> x / 10)
         .filter(x -> x != 2)
         .delay(2000)
-        .subscribe(new Observer<>(
+        .subscribe(
             o -> System.out.println(o),
             throwable -> System.out.println(throwable),
             () -> System.out.println("done")
-        ));
+        );
   }
 }
 
@@ -28,6 +28,10 @@ class Observable<T> {
 
   void subscribe(Observer<T> observer) {
     innerSubscribe.subscribe(observer);
+  }
+
+  void subscribe(NextCallback<T> next, ErrorCallback error, CompleteCallback complete) {
+    subscribe(new Observer<>(next, error, complete));
   }
 
   public <R> Observable<R> map(Transform<T, R> transform) {
