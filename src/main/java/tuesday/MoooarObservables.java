@@ -4,13 +4,20 @@ import java.util.stream.Stream;
 
 public class MoooarObservables {
   public static void main(String[] args) {
-    Observable<Integer> arrayObservable =
-        Observable.from(10, 20, 30);
-
-    arrayObservable
+    Observable.from(10, 20, 30)
         .map(x -> x / 10)
         .filter(x -> x != 2)
         .delay(2000)
+        .subscribe(
+            o -> System.out.println(o),
+            throwable -> System.out.println(throwable),
+            () -> System.out.println("done")
+        );
+
+    Observable.from("apple", "banana", "cherry")
+        .filter(w -> w.charAt(0) != 'b')
+        .map(w -> w.toUpperCase())
+        .delay(1000)
         .subscribe(
             o -> System.out.println(o),
             throwable -> System.out.println(throwable),
@@ -75,7 +82,8 @@ class Observable<T> {
                     t -> {
                       try {
                         Thread.sleep(time);
-                      } catch (InterruptedException ignored) { }
+                      } catch (InterruptedException ignored) {
+                      }
                       outputObserver.onNext(t);
                     },
                     throwable -> outputObserver.onError(throwable),
