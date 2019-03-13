@@ -32,6 +32,12 @@ class Observable<T> {
     innerSubscribe.subscribe(observer);
   }
 
+  public <R> Observable<R> map(Transform<T, R> transform) {
+    Observable<T> inputObservable = this;
+    Observable<R> outputObservable = null;
+    return outputObservable;
+  }
+
   static <T> Observable<T> create(Subscribe<T> subscribe) {
     return new Observable<>(subscribe);
   }
@@ -47,6 +53,10 @@ class Observer<T> {
     this.error = error;
     this.complete = complete;
   }
+}
+
+interface Transform<INPUT, OUTPUT> {
+  OUTPUT transform(INPUT input);
 }
 
 interface Subscribe<T> {
