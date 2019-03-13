@@ -4,24 +4,30 @@ import java.util.stream.Stream;
 
 public class MoooarObservables {
   public static void main(String[] args) {
-    NextCallback<Object> nextCallback = o -> System.out.println(o);
-
-    ErrorCallback errorCallback = throwable -> System.out.println(throwable);
-
-    CompleteCallback completeCallback = () -> System.out.println("done");
-
-    giveMeSomeData(
-      nextCallback,
-      errorCallback,
-      completeCallback
+    Observer<Object> observer = new Observer<>(
+        o -> System.out.println(o),
+        throwable -> System.out.println(throwable),
+        () -> System.out.println("done")
     );
+
+    giveMeSomeData(observer);
   }
 
-  static void giveMeSomeData(
-      NextCallback<Object> next, ErrorCallback error, CompleteCallback complete
-  ) {
-    Stream.of(10,20,30)
-        .forEach(i -> next.nextCallback(i));
+  static void giveMeSomeData(Observer<Object> observer) {
+    Stream.of(10, 20, 30)
+        .forEach(i -> observer.next.nextCallback(i));
+  }
+}
+
+class Observer<T> {
+  NextCallback<T> next;
+  ErrorCallback error;
+  CompleteCallback complete;
+
+  public Observer(NextCallback<T> next, ErrorCallback error, CompleteCallback complete) {
+    this.next = next;
+    this.error = error;
+    this.complete = complete;
   }
 }
 
