@@ -1,4 +1,4 @@
-package sunday;
+package wednesday;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
